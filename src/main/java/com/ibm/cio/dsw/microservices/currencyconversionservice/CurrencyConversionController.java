@@ -3,6 +3,8 @@ package com.ibm.cio.dsw.microservices.currencyconversionservice;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,12 +15,16 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 public class CurrencyConversionController {
 	
+	private Logger logger= LoggerFactory.getLogger(CurrencyConversionController.class);
+	
 	@Autowired
 	private CurrencyExchangeProxy proxy;
 
 	@GetMapping("/currency-conversion/from/{from}/to/{to}/quantity/{quantity}")
 	public CurrencyConversion calculate(@PathVariable String from, @PathVariable String to,
 			@PathVariable BigDecimal quantity) {
+		
+		logger.info("calculate called with from {} to {} and quantity {}", from, to, quantity);
 
 		HashMap<String, String> map = new HashMap<>();
 		map.put("from", from);
@@ -37,6 +43,8 @@ public class CurrencyConversionController {
 	@GetMapping("/currency-conversion-feign/from/{from}/to/{to}/quantity/{quantity}")
 	public CurrencyConversion calculateFeign(@PathVariable String from, @PathVariable String to,
 			@PathVariable BigDecimal quantity) {
+		
+		logger.info("calculateFeign called with from {} to {} and quantity {}", from, to, quantity);
 
 		CurrencyConversion currencyConversion = proxy.exchange(from, to);
 
